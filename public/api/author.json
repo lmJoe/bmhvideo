@@ -1,0 +1,33 @@
+{
+  "code":1,
+  "success":true,
+  "fansNum":1.6,
+  "videoNum":1520,
+  "focusNum":63,
+  "authorName":"可乐妙招",
+  "intro":"好看视频认证：生活领域创作者",
+  "statement":"每天分享最实用的生活小妙招，小技巧",
+  "data":[
+    {
+      "response_count":10,
+      "video":[
+        {
+          "author":"可乐妙招",
+          "author_icon":"https://pic.rmb.bdstatic.com/1540eb65a2b7a43940b14f805d0651b5.jpeg@s_2,w_272,h_272,q_80",
+          "cover_src":"https://f7.baidu.com/it/u=310922873,103287360&fm=222&app=108&f=JPEG@s_0,w_672,h_448,q_80",
+          "read_num":1725,
+          "title":"夏天，在门上贴一个创可贴，驱赶蚊子真实用，学会赶紧回家试试",
+          "vid":"7177243098573381642",
+          "duration": "02:28",
+          "dtime": 1625796955000
+        },{},{}
+      ]
+    },{
+      "response_count":8,
+      "smallVideo":[]
+    },{
+      "response_count":10,
+      "collection":[]
+    }
+  ]
+}
