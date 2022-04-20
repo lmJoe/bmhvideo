@@ -32,9 +32,33 @@ const ListModule: React.FC<IListProps> = (props) => {
   const pageIndex = useSelector((state:RootState) => {return state.pageIndex})
   
   /**获取视频 */
-  const [data, setData] = useState<string[]>([])
-  const [hasMore, setHasMore] = useState(true)
-  const [params, setparams] = useState({ channelid: 100, pageIndex: 1 })
+  const [data, setData] = useState<string[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [changeMark, setchangeMark] = useState(1);
+  useEffect(() => {
+    var params = {
+      channelid:channelid,
+      pageIndex:pageIndex,
+    }
+    // getVideoList(params)
+    if(pageIndex==0){
+      dispatch({
+        type: 'VIDEO_PARAMS',
+        pageIndex: 1,
+        channelid:channelid,
+      })
+      console.log(1)
+    }else{
+      dispatch({
+        type: 'VIDEO_PARAMS',
+        pageIndex: pageIndex+1,
+        channelid:channelid,
+      })
+      console.log(2)
+    }
+    console.log(channelid,pageIndex)
+    // dispatch(actionCreators.getVideo())
+  },[changeMark,channelid])
   async function mockRequest() {
     let param = {
       channelid: channelid,
@@ -43,38 +67,15 @@ const ListModule: React.FC<IListProps> = (props) => {
     await sleep(200);
     return getVideoList(param);
   }
-  useEffect(() => {
-    if(channelid==undefined&&pageIndex==undefined){
-      dispatch({
-        type: 'VIDEO_PARAMS',
-        pageIndex: 1,
-        channelid:100,
-      })
-    }else{
-      dispatch({
-        type: 'VIDEO_PARAMS',
-        pageIndex: pageIndex+1,
-        channelid:channelid,
-      })
-    }
-    console.log(channelid,pageIndex)
-    // dispatch(actionCreators.getVideo())
-  },[dispatch])
-
   async function loadMore() {
-    if(params.pageIndex == 1){
-      const append:any = await mockRequest()
-      const Videolist = append.Videolist;
-      if(typeof append=='object'){
-        setData(val => [...val, ...Videolist])
-        setHasMore(Videolist.length > 0)
-        // setparams({ pageIndex: params.pageIndex++,channelid:100});
-      }else{
-        setData([])
-      }
-      
+    const append:any = await mockRequest()
+    const Videolist = append.Videolist;
+    if(typeof append=='object'){
+      setData(val => [...val, ...Videolist])
+      setHasMore(Videolist.length > 0)
+      setchangeMark(changeMark+1);
     }else{
-
+      setData([])
     }
   }
   return (
@@ -82,6 +83,11 @@ const ListModule: React.FC<IListProps> = (props) => {
       {/* <h2>{props.message}</h2> 可以将此处设置loading*/}
       <PullToRefresh
         onRefresh={async () => {
+          dispatch({
+            type: 'VIDEO_PARAMS',
+            pageIndex: 1,
+            channelid:channelid,
+          })
           await sleep(200);
           const append:any = await mockRequest()
           setData(append.Videolist)

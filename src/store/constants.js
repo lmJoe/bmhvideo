@@ -1,2 +1,5 @@
 export const VIDEO_PARAMS = 'VIDEO_PARAMS'
 export const OPER_TYPE = 'OPER_TYPE'
+export const VIDEO_LIST = 'VIDEO_LIST'
+export const CHANNEL_LIST = 'CHANNEL_LIST'
+export const CHOSE_CHANNEL = 'CHOSE_CHANNEL'
