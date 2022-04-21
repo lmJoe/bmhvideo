@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/typesStore'
-import * as actionCreators from '../../store/actionCreators'
 import { InfiniteScroll, List, PullToRefresh, DotLoading,Image } from 'antd-mobile'
 import { sleep } from 'antd-mobile/es/utils/sleep'
 import { Link } from 'react-router-dom';
@@ -30,17 +29,14 @@ const ListModule: React.FC<IListProps> = (props) => {
   const dispatch = useDispatch()
   const channelid = useSelector((state:RootState) => {return state.channelid})
   const pageIndex = useSelector((state:RootState) => {return state.pageIndex})
-  
+  const ref = useRef({ channelid, pageIndex });
   /**获取视频 */
   const [data, setData] = useState<string[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [changeMark, setchangeMark] = useState(1);
   useEffect(() => {
-    var params = {
-      channelid:channelid,
-      pageIndex:pageIndex,
-    }
-    // getVideoList(params)
+    /** channelid、pageIndex更新后  prevChannelid、prevPageIndex更新前*/
+    let { channelid: prevChannelid, pageIndex: prevPageIndex } = ref.current;
     if(pageIndex==0){
       dispatch({
         type: 'VIDEO_PARAMS',
@@ -56,15 +52,31 @@ const ListModule: React.FC<IListProps> = (props) => {
       })
       console.log(2)
     }
-    console.log(channelid,pageIndex)
-    // dispatch(actionCreators.getVideo())
+    if (prevChannelid !== channelid) {
+      ref.current = { channelid, pageIndex };
+      const changeGetData = async()=>{
+        dispatch({
+          type: 'VIDEO_PARAMS',
+          pageIndex: 1,
+          channelid:channelid,
+        })
+        console.log('channelid!',channelid);
+        await sleep(500);
+        const append:any = await mockRequest()
+        setData(append.Videolist)
+      }
+      changeGetData()
+    }else if(prevPageIndex !== pageIndex){
+      ref.current = { channelid, pageIndex };
+      console.log('prevPageIndex!',pageIndex);
+    }
   },[changeMark,channelid])
   async function mockRequest() {
     let param = {
       channelid: channelid,
       pageIndex: pageIndex,
     };
-    await sleep(200);
+    await sleep(500);
     return getVideoList(param);
   }
   async function loadMore() {
@@ -88,7 +100,7 @@ const ListModule: React.FC<IListProps> = (props) => {
             pageIndex: 1,
             channelid:channelid,
           })
-          await sleep(200);
+          await sleep(500);
           const append:any = await mockRequest()
           setData(append.Videolist)
         }}
@@ -97,6 +109,7 @@ const ListModule: React.FC<IListProps> = (props) => {
           {
           data.map((item:any, index:number) => (
             <Video key={item.videoId} className='swiperTxt'>
+              {/* <Link key={index} to={'/detail/'+item.videoId}> */}
               <Link key={index} to={'/detail/'+item.videoId}>
                 <div className="video-list-item">
                       <div className="video-list-item-main">
@@ -187,5 +200,4 @@ const ListModule: React.FC<IListProps> = (props) => {
 ListModule.defaultProps = {
   message: 'ListModule'
 }
-
 export default ListModule;
